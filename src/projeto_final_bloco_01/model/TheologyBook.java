@@ -2,7 +2,7 @@ package projeto_final_bloco_01.model;
 
 public class TheologyBook extends Book {
 
-	String theme;
+	private String theme;
 
 	public TheologyBook(int id, String name, int typeOfBook, float price, String theme) {
 		super(id, name, typeOfBook, price);

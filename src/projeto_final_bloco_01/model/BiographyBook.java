@@ -2,7 +2,7 @@ package projeto_final_bloco_01.model;
 
 public class BiographyBook extends Book {
 	
-	String nameOfSaint;
+	private String nameOfSaint;
 
 	public BiographyBook(int id, String name, int typeOfBook, float price, String nameOfSaint) {
 		super(id, name, typeOfBook, price);

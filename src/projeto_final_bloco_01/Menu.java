@@ -1,7 +1,14 @@
 package projeto_final_bloco_01;
 
 import java.io.IOException;
+import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
+
+import projeto_final_bloco_01.controller.BookController;
+import projeto_final_bloco_01.model.BiographyBook;
+import projeto_final_bloco_01.model.Book;
+import projeto_final_bloco_01.model.TheologyBook;
 
 public class Menu {
 
@@ -9,92 +16,174 @@ public class Menu {
 
 		Scanner read = new Scanner(System.in);
 
-		int option = 0, id, typeBook;
-		String name;
+		BookController books = new BookController();
+
+		// Teste 1
+		BiographyBook b1 = new BiographyBook(books.generateId(), "História de uma alma", 2, 33.06f,
+				"Santa Teresinha do Menino Jesus");
+		books.create(b1);
+
+		// Teste 2
+		TheologyBook t1 = new TheologyBook(books.generateId(), "Filotéia: Introdução à Vida Devota", 1, 39.15f,
+				"Orientação a uma vida devota a Deus, e exercícios espirituais.");
+		books.create(t1);
+
+		int option = 0, id, typeOfBook;
+		String name, theme, nameOfSaint, confirm;
 		float price;
 
 		while (true) {
-			System.out.println("\n************************************************");
-			System.out.println("            📚 MENU E-COMMERCE DOM BOSCO      ");
-			System.out.println("************************************************");
-			System.out.println(" 1️⃣  - Criar Livro");
-			System.out.println(" 2️⃣  - Listar Todos os Livros");
-			System.out.println(" 3️⃣  - Listar Livros por ID");
-			System.out.println(" 4️⃣  - Atualizar Livro");
-			System.out.println(" 5️⃣  - Deletar Livro");
-			System.out.println(" 0️⃣  - Sair");
-			System.out.println("************************************************");
-			System.out.print("👉 Escolha uma opção: ");
-			option = read.nextInt();
+			try {
+				System.out.println("\n************************************************");
+				System.out.println("            📚 MENU E-COMMERCE DOM BOSCO      ");
+				System.out.println("************************************************");
+				System.out.println(" 1️⃣  - Adicionar Livro");
+				System.out.println(" 2️⃣  - Listar Todos os Livros");
+				System.out.println(" 3️⃣  - Listar Livros por ID");
+				System.out.println(" 4️⃣  - Atualizar Livro");
+				System.out.println(" 5️⃣  - Deletar Livro");
+				System.out.println(" 0️⃣  - Sair");
+				System.out.println("************************************************");
+				System.out.print("👉 Escolha uma opção: ");
+				option = read.nextInt();
 
-			if (option == 0) {
-				System.out.println("\nLivraria Dom Bosco - Aqui você encontra seus santos livros!");
-				about();
-				read.close();
-				System.exit(0);
-			}
+				if (option == 0) {
+					System.out.println("\nLivraria Dom Bosco - Aqui você encontra seus santos livros!");
+					about();
+					read.close();
+					System.exit(0);
+				}
 
-			switch (option) {
-			case 1:
+				switch (option) {
+				case 1 -> {
 					System.out.println("📘 Criar Livro\n\n");
-	
-					System.out.println("Digite o TÍTULO do Livro:");
+
+					System.out.println("Digite o NOME do Livro:");
 					read.skip("\\R");
 					name = read.nextLine();
-	
+
 					System.out.println("Digite o TIPO do Livro (1 - TEOLOGIA | 2 - BIOGRAFIA ):");
-					typeBook = read.nextInt();
-	
+					typeOfBook = read.nextInt();
+
 					System.out.println("Digite o PREÇO do Livro:");
 					price = read.nextFloat();
-	
-					switch (typeBook) {
+
+					switch (typeOfBook) {
 					case 1 -> {
 						System.out.println("Digite o TEMA de Teologia: ");
 						read.skip("\\R");
+						theme = read.nextLine();
+
+						books.create(new TheologyBook(books.generateId(), name, typeOfBook, price, theme));
 					}
 					case 2 -> {
 						System.out.println("Digite o NOME do SANTO biografado: ");
 						read.skip("\\R");
-	
+						nameOfSaint = read.nextLine();
+
+						books.create(new BiographyBook(books.generateId(), name, typeOfBook, price, nameOfSaint));
 					}
+					}
+
+					keyPress();
 				}
 
-				keyPress();
-				break;
-			case 2:
-				System.out.println("Listar todas os LIVROS\n\n");
-				keyPress();
-				break;
-			case 3:
-				System.out.println("Consultar dados do LIVRO - por número\n\n");
+				case 2 -> {
+					System.out.println("Listar todas os LIVROS\n\n");
+					books.listAll();
+					keyPress();
 
-				System.out.println("Digite o ID do LIVRO: ");
-				id = read.nextInt();
+				}
 
-				keyPress();
-				break;
-			case 4:
-				System.out.println("Atualizar dados do LIVRO\n\n");
+				case 3 -> {
+					System.out.println("Consultar dados do LIVRO - por número\n\n");
 
-				System.out.println("Digite o ID do LIVRO: ");
-				id = read.nextInt();
+					System.out.println("Digite o ID do LIVRO: ");
+					id = read.nextInt();
 
-				keyPress();
-				break;
-			case 5:
-				System.out.println("Apagar o LIVRO\n\n");
+					books.listById(id);
 
-				System.out.println("Digite o ID do LIVRO: ");
-				id = read.nextInt();
+					keyPress();
 
-				keyPress();
-				break;
-			default:
-				System.out.println("\nOpção Inválida!\n");
-				keyPress();
-				break;
+				}
+
+				case 4 -> {
+					System.out.println("Atualizar dados do LIVRO\n\n");
+
+					System.out.println("Digite o ID do LIVRO: ");
+					id = read.nextInt();
+
+					Optional<Book> book = books.findByCollection(id);
+
+					if (book.isPresent()) {
+						System.out.println("Digite o NOME do Livro:");
+						read.skip("\\R");
+						name = read.nextLine();
+
+						typeOfBook = book.get().getTypeOfBook();
+
+						System.out.println("Digite o PREÇO do Livro:");
+						price = read.nextFloat();
+
+						switch (typeOfBook) {
+						case 1 -> {
+							System.out.println("Digite o TEMA de Teologia: ");
+							read.skip("\\R");
+							theme = read.nextLine();
+
+							books.update(new TheologyBook(id, name, typeOfBook, price, theme));
+						}
+						case 2 -> {
+							System.out.println("Digite o NOME do SANTO biografado: ");
+							read.skip("\\R");
+							nameOfSaint = read.nextLine();
+
+							books.update(new BiographyBook(id, name, typeOfBook, price, nameOfSaint));
+						}
+						}
+					} else
+						System.out.printf("\n❌ Livro com ID %d não encontrado.", id);
+
+					keyPress();
+
+				}
+
+				case 5 -> {
+					System.out.println("Apagar o LIVRO\n\n");
+
+					System.out.println("Digite o ID do LIVRO: ");
+					id = read.nextInt();
+					read.skip("\\R");
+
+					do {
+						System.out.println("Deseja realmente remover o LIVRO? (S - SIM | N - NÃO)");
+						confirm = read.nextLine().trim();
+					} while (!confirm.equalsIgnoreCase("S") && !confirm.equalsIgnoreCase("N"));
+
+					if (confirm.equalsIgnoreCase("S"))
+						books.remove(id);
+					else
+						System.out.println("❎ Remoção cancelada.");
+
+					keyPress();
+
+				}
+
+				default -> {
+					System.out.println("\nOpção Inválida!\n");
+					keyPress();
+
+				}
+
+				}
+			} catch (InputMismatchException e) {
+				System.out.println("❌ Entrada inválida! Por favor, digite um valor numérico correto.");
+				read.nextLine();
+			} catch (Exception e) {
+				System.out.println("❌ Ocorreu um erro inesperado: " + e.getMessage());
+				read.nextLine();
 			}
+
 		}
 
 	}

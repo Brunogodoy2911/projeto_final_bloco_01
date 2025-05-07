@@ -58,7 +58,7 @@ public abstract class Book {
 		System.out.println("Nome: " + name);
 		System.out.println("Tipo: " + (typeOfBook == 1 ? "Teologia" : "Biografia"));
 		System.out.println("Preço: " + nfMoeda.format(price));
-		System.out.println("=========================================");
+		System.out.println("=========================================\n");
 	}
 
 }
